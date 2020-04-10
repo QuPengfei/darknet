@@ -7,6 +7,7 @@ from os.path import join
 sets=[('2007', 'train'), ('2007', 'val'), ('2007', 'test')]
 
 classes = ["香蕉皮", "卫生纸", "橘子皮", "鸡蛋壳", "牛奶盒"]
+#classes = ["xjp", "wsz", "jzp", "jdp", "nnh"]
 
 
 def convert(size, box):
@@ -54,5 +55,8 @@ for year, image_set in sets:
         convert_annotation(year, image_id)
     list_file.close()
 
-os.system("cat 2007_train.txt > train.txt")
+os.system("cat 2007_train.txt 2007_val.txt > train.txt")
+os.system("mv 2007_*.txt  voc/.")
+os.system("mv train.txt  voc/.")
+#os.system("cat 2007_train.txt > train.txt")
 
