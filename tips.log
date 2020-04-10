@@ -1,0 +1,88 @@
+0. VOC dataset 
+
+- folder 
+mkdir -p data/VOCdevkit/VOC2007/Annotations/
+mkdir -p data/VOCdevkit/VOC2007/JPEGImages/
+mkdir -p data/VOCdevkit/VOC2007/labels/
+mkdir -p data/VOCdevkit/VOC2007/ImageSets/Main
+- xml and jpg 
+put jpg files in JPEGImages
+put xml files in Annotations
+- generate labels and train/test  
+cd data
+python ../scripts/voc_label.py
+- split the train and test sets
+cd data/VOCdevkit/VOC2007/
+python get_train_val_test.py
+
+
+1. cmd to build/train/test/valid/recall
+
+1.0-build
+make 
+1.1-train from stratch:
+./darknet detector train cfg/voc.data cfg/yolov3-voc.cfg darknet53.conv.74
+
+1.2-test on one file:
+./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc.backup xxx.jpg
+
+
+1.3-test on test sets:
+- comment the "Training" and uncomment the "Testing" in cfg/yolov3-voc.cfg
+- replace the hard code output path in local side
+	replace g_output_path in examples/detector.c  
+- run the command and then enter the Image path :data/voc/2007_test.txt
+./darknet detector test cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc.backup
+
+1.4-valid on test set:
+source activate py27(optional)
+./darknet detector valid cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc.backup
+python2 reval_voc.py results
+
+1.5-recall on test set:
+./darknet detector recall cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc.backup
+
+2. cmd to continure train
+./darknet detector train cfg/voc.data cfg/yolov3-voc.cfg backup/yolov3-voc.backup -gpus 0
+
+3. log
+
+3.1 log on 3600. loss = ~0.12
+recall:  
+61    68   107	RPs/Img: 3.26	IOU: 52.86%	Recall:63.55%
+
+
+valid:
+AP for xjp = 0.4370
+AP for wsz = 0.2727
+AP for jzp = 0.4531
+AP for jdp = 0.5080
+AP for nnh = 0.5935
+Mean AP = 0.4528
+~~~~~~~~
+Results:
+0.437
+0.273
+0.453
+0.508
+0.593
+0.453
+~~~~~~~~
+3.2 log on 4900 loss =~0.8
+
+valid:
+AP for xjp = 0.4695
+AP for wsz = 0.2727
+AP for jzp = 0.3977
+AP for jdp = 0.4710
+AP for nnh = 0.5855
+Mean AP = 0.4393
+~~~~~~~~
+Results:
+0.469
+0.273
+0.398
+0.471
+0.585
+0.439
+
